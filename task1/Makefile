@@ -1,10 +1,11 @@
 CFLAGS = -g -Wall -ansi -pedantic -std=c99
+CTARGETS = main.c dynarr.c
 
-all: compile start
+all: compile
 
 compile:
-	gcc $(CFLAGS) -o task1 main.c
+	gcc $(CFLAGS) $(CTARGETS) -o task1
 
 start:
-	./task1
+	echo 3 2 1 | ./task1 12
 
