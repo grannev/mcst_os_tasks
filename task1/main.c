@@ -13,9 +13,9 @@ int round_div(int x, int y)
 
 int cstr_to_int(char *cstring)
 {
-    int i, res = 0;
-    for (i = 0; cstring[i] != '\0'; i++)    
-        res = res * 10 + (cstring[i] + '0');
+    int i, res = cstring[0] - '0';
+    for (i = 1; cstring[i] != '\0'; i++)    
+        res = res * 10 + (cstring[i] - '0');
     return res;
 }
 
@@ -65,27 +65,39 @@ void *bubble_sort(void *args)
 
 int main(int argc, char *argv[])
 {
-    int size = 10, i, threads_amount, entries_amount;
+    if (argc < 2)
+        return 1;
+    
+    int size = 10;
+    int threads_amount = cstr_to_int(argv[1]);
+    int part_size, i, left, right;
+
+    if (argc == 3)
+        size = cstr_to_int(argv[2]);
     int *array = malloc(sizeof(int) * size);
     for (i = 0; i < size; i++)
         array[i] = size - i;
     print_array(array, size);
 
-    if (argc > 1)
-        threads_amount = cstr_to_int(argv[1]);
-    else
-        threads_amount = 1;
-    entries_amount = round_div(size, (size - threads_amount + 1));
+    part_size = (size + threads_amount - 1) / threads_amount;
     pthread_t *threads = malloc(sizeof(pthread_t) * threads_amount);
     entry *entries = malloc(sizeof(entry) * threads_amount);
-    for (i = 0; i < threads_amount && i < entries_amount; i++) {
-        init_entry(entries + i, array, 0, size);
+    for (i = 0; i < threads_amount; i++) {
+        left = i * part_size;
+        right = (i + 1) * part_size - 1;
+        if (right >= size)
+            right = size - 1;
+        if (left >= size)
+            continue;
+        init_entry(entries + i, array, left, right);
         pthread_create(threads + i, NULL, bubble_sort, (void*)(entries + i));
     }
 
-    pthread_join(threads[0], NULL);
-
+    for (i = 0; i < threads_amount; i++)
+        if (i * part_size < size)
+            pthread_join(threads[i], NULL);
     print_array(array, size);
+    
     free(array);
     free(threads);
     free(entries);
