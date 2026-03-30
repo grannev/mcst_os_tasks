@@ -1,4 +1,4 @@
-CFLAGS = -g -Wall -ansi -pedantic -std=c89
+CFLAGS = -g -Wall -ansi -pedantic -std=c99
 
 all: compile start
 
