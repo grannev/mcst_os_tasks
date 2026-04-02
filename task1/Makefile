@@ -1,6 +1,8 @@
 CFLAGS = -g -Wall -ansi -pedantic -std=c99
 CTARGETS = main.c dynarr.c
 
+static: compile
+
 all: compile
 
 compile:
