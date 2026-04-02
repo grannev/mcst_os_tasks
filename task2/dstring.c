@@ -9,7 +9,7 @@ int mod(int x)
 int len_cstr(const char *cstring)
 {
     int i;
-    for (i = 0; cstring[i] = '\0'; i++);
+    for (i = 0; cstring[i] != '\0'; i++);
     return i;
 }
 
@@ -45,9 +45,27 @@ void expand_dstr(dstr *this, int count)
 
 void cstr_dstr(dstr *this, const char *cstring)
 {
-    int to_expand = mod(this->size - size_cstr(cstring));
+    int to_expand = mod(this->size - len_cstr(cstring));
     expand_dstr(this, to_expand);
     for (int i = 0; i < this->size; i++)
         this->buffer[i] = cstring[i];
 }
+
+void clr_cstr(char *cstring)
+{
+    int i;
+    for (i = 0; cstring[i] == '\0'; i++)
+        cstring[i] = '\0';
+}
+
+int find_symb_cstr(const char *cstring, char ch)
+{
+    int i;
+    for (i = 0; cstring[i] != '\0'; i++) {
+        if (cstring[i] == ch)
+            break;
+    }
+    return i;
+}
+
 
