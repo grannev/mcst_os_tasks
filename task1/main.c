@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#include "dynarr.h"
+#include "../dynarr.h"
 
 
 int round_div(int x, int y)

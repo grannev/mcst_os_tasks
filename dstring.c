@@ -15,9 +15,10 @@ int len_cstr(const char *cstring)
 
 int cmp_cstr(const char *cstr_left, const char *cstr_right)
 {
+    int i;
     if (len_cstr(cstr_left) != len_cstr(cstr_right))
         return 0;
-    for (int i = 0; cstr_left[i] != '\0'; i++)
+    for (i = 0; cstr_left[i] != '\0'; i++)
         if (cstr_left[i] != cstr_right[i])
             return 0;
     return 1;
@@ -45,9 +46,10 @@ void expand_dstr(dstr *this, int count)
 
 void cstr_dstr(dstr *this, const char *cstring)
 {
+    int i;
     int to_expand = mod(this->size - len_cstr(cstring));
     expand_dstr(this, to_expand);
-    for (int i = 0; i < this->size; i++)
+    for (i = 0; i < this->size; i++)
         this->buffer[i] = cstring[i];
 }
 
@@ -61,11 +63,19 @@ void clr_cstr(char *cstring)
 int find_symb_cstr(const char *cstring, char ch)
 {
     int i;
-    for (i = 0; cstring[i] != '\0'; i++) {
+    for (i = 0; cstring[i] != '\0'; i++)
         if (cstring[i] == ch)
             break;
-    }
     return i;
 }
 
+int cnt_char_cstr(const char *cstring, char ch)
+{
+    int i, result;
+    result = 0;
+    for (i = 0; cstring[i] != '\0'; i++)
+        if (cstring[i] == ch)
+            result++;
+    return result;
+}
 
