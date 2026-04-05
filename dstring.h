@@ -21,6 +21,12 @@ int len_cstr(const char *cstring);
 /* compare two cstring, return 1 if every char equals another */
 int cmp_cstr(const char *cstr_left, const char *cstr_right);
 
+/* compare two cstring, return 1 if left less than right by symbols */
+int cmp_cstr_lex(const char *cstr_left, const char *cstr_right);
+
+/* compare two cstring, return 1 if left less than right */
+int cmp_cstr_plain(const char *cstr_left, const char *cstr_right);
+
 /* set every char to 0 byte until get to 0 byte of cstring */
 void clr_cstr(char *cstring);
 

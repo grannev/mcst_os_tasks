@@ -8,6 +8,14 @@
 /* #define stat struct stat */
 
 
+void swap_value(int *x, int *y)
+{
+    int tmp = *x;
+    *x = *y;
+    *y = tmp;
+}
+
+
 int cnt_lines_file(const char *file_name)
 {
     FILE *file;
@@ -46,6 +54,8 @@ void init_file_lines(const char *file_name, char **file_lines, int size)
             i++;
             continue;
         }
+        if (i == 0)
+            continue;
         file_lines[cnt] = malloc(i);
         i = 0;
         cnt++;
@@ -60,12 +70,24 @@ void init_file_lines(const char *file_name, char **file_lines, int size)
     while ((ch = fgetc(file)) != EOF) {
         if (ch != '\n') {
             file_lines[cnt][i] = ch;
+            i++;
             continue;
         }
+        if (i == 0)
+            continue;
         i = 0;
         cnt++;
     }
     fclose(file);
+}
+
+
+void free_file_lines(char **file_lines, int size)
+{
+    int i;
+    for (i = 0; i < size; i++)
+        free(file_lines[i]);
+    free(file_lines);
 }
 
 
@@ -76,7 +98,37 @@ void sort_lines_plain_to_file(
         int reversed
 )
 {
-    /* ... */
+    int i, j;
+    int *indices = malloc(sizeof(int) * cnt_lines);
+    FILE *file;
+
+    for (i = 0; i < cnt_lines; i++)
+        indices[i] = i;
+   
+    for (i = 0; i + 1 < cnt_lines; i++)
+        for (j = 0; j + 1 < cnt_lines - i; j++)
+            if (!reversed) {
+                if (cmp_cstr_plain(
+                            file_lines[indices[j + 1]], 
+                            file_lines[indices[j]]
+                    ))
+                    swap_value(indices + j + 1, indices + j);
+            } else {
+                if (cmp_cstr_plain(
+                            file_lines[indices[j]],
+                            file_lines[indices[j + 1]] 
+                    ))
+                    swap_value(indices + j + 1, indices + j);
+            }
+    
+    file = fopen(file_name, "w");
+    for (i = 0; i < cnt_lines; i++) {
+        fputs(file_lines[indices[i]], file);
+        fputc(10, file);
+    }
+
+    fclose(file);
+    free(indices);
 }
 
 
@@ -87,7 +139,37 @@ void sort_lines_lex_to_file(
         int reversed
 )
 {
-    /* ... */
+    int i, j;
+    int *indices = malloc(sizeof(int) * cnt_lines);
+    FILE *file;
+
+    for (i = 0; i < cnt_lines; i++)
+        indices[i] = i;
+   
+    for (i = 0; i + 1 < cnt_lines; i++)
+        for (j = 0; j + 1 < cnt_lines - i; j++)
+            if (!reversed) {
+                if (cmp_cstr_lex(
+                            file_lines[indices[j + 1]], 
+                            file_lines[indices[j]]
+                    ))
+                    swap_value(indices + j + 1, indices + j);
+            } else {
+                if (cmp_cstr_lex(
+                            file_lines[indices[j]],
+                            file_lines[indices[j + 1]] 
+                    ))
+                    swap_value(indices + j, indices + j + 1);
+            }
+
+    file = fopen(file_name, "w");
+    for (i = 0; i < cnt_lines; i++) {
+        fputs(file_lines[indices[i]], file);
+        fputc(10, file);
+    }
+
+    fclose(file);
+    free(indices);
 }
 
 
@@ -107,7 +189,7 @@ int main(int argc, char **argv)
     sorting_type = argv[3];
 
     cnt_lines = cnt_lines_file(in_file_name);
-    file_lines = malloc(cnt_lines);
+    file_lines = malloc(sizeof(char*) * cnt_lines);
     init_file_lines(in_file_name, file_lines, cnt_lines);
 
     if (cmp_cstr(sorting_type, "plain"))
@@ -119,6 +201,7 @@ int main(int argc, char **argv)
     else if (cmp_cstr(sorting_type, "rlex"))
         sort_lines_lex_to_file(out_file_name, file_lines, cnt_lines, 1);
 
+    free_file_lines(file_lines, cnt_lines);
     return 0;
 }
 

@@ -24,6 +24,34 @@ int cmp_cstr(const char *cstr_left, const char *cstr_right)
     return 1;
 }
 
+int cmp_cstr_lex(const char *cstr_left, const char *cstr_right)
+{
+    int i;
+    
+    for (i = 0; cstr_left[i] != 0 || cstr_right[i] != 0; i++)
+        if (cstr_left[i] >= cstr_right[i])
+            return 0;
+        else
+            break;
+    
+    return 1;
+}
+
+int cmp_cstr_plain(const char *cstr_left, const char *cstr_right)
+{
+    int size_left, size_right;
+    
+    size_left = len_cstr(cstr_left);
+    size_right = len_cstr(cstr_right);
+
+    if (size_left == size_right)
+        return cmp_cstr_lex(cstr_left, cstr_right);
+    if (size_left < size_right)
+        return 1;
+    
+    return 0;
+}
+
 void init_dstr(dstr *this)
 {
     this->size = 0;
