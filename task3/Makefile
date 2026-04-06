@@ -6,5 +6,5 @@ all: static
 static:
 	gcc $(CFLAGS) $(CTARGETS) -o task3
 run:
-	./task3 in.txt out.txt plain
+	./task3 in.txt out.txt lex 
 	cat out.txt
