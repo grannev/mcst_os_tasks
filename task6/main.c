@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 
+/* using std macros place corresponding file type */
 const char *place_file_type(mode_t file_mode)
 {
     if (S_ISREG(file_mode))
@@ -19,7 +20,11 @@ const char *place_file_type(mode_t file_mode)
 }
 
 
-void print_access(mode_t file_mode)
+/* compare array of macro bytes with out file_mode */
+/* and place an access char to stdout */
+/* form array of digital number of access rights */
+/* same way and then printing it */
+/* void print_access(mode_t file_mode) */
 { 
     const int chb[9] = {
         S_IRUSR, S_IWUSR, S_IXUSR,
@@ -70,7 +75,8 @@ void print_file_stat(const char *file_name)
         exit(1);
     }
     file_mode = file_stat.st_mode;
-    
+   
+    /* trying to make format of data like in stat */
     printf("  File: %s\n", file_name);
     printf("%2cSize: %lu", ' ', file_stat.st_size);
     printf("%4cBlocks: %lu", ' ', file_stat.st_blocks);
@@ -81,8 +87,7 @@ void print_file_stat(const char *file_name)
     printf("%4cInode: %lu", ' ', file_stat.st_ino);
     printf("%4cLinks: %lu\n", ' ', file_stat.st_nlink);
     printf("Access: "); print_access(file_mode);
-
-    printf("\n");
+    /* todo: time of access/modify/change/birth */
 }
 
 

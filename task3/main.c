@@ -16,6 +16,7 @@ void swap_value(int *x, int *y)
 }
 
 
+/* read data from file by his name and counts number of '\n' chars */
 int cnt_lines_file(const char *file_name)
 {
     FILE *file;
@@ -38,12 +39,14 @@ int cnt_lines_file(const char *file_name)
 }
 
 
+/* read data from file and malloc exact size for each line of file */
 void init_file_lines(const char *file_name, char **file_lines, int size)
 {
     FILE *file;
     int cnt, i;
     char ch;
 
+    /* in cycle malloc specific memory for each line */
     file = fopen(file_name, "r");
     if (file == NULL)
         exit(1);
@@ -62,6 +65,7 @@ void init_file_lines(const char *file_name, char **file_lines, int size)
     }
     fclose(file);
 
+    /* read data in allocated memory parts from corresponding lines */
     file = fopen(file_name, "r");
     if (file == NULL)
         exit(1);
@@ -82,6 +86,7 @@ void init_file_lines(const char *file_name, char **file_lines, int size)
 }
 
 
+/* free allocated memory */
 void free_file_lines(char **file_lines, int size)
 {
     int i;
@@ -91,6 +96,10 @@ void free_file_lines(char **file_lines, int size)
 }
 
 
+/* sorting array of numbers, that describe  */ 
+/* indeces of lines in cstrings array       */
+/* and then according to indeces in array   */ 
+/* of nums write corresponding cstr to file */
 void sort_lines_plain_to_file(
         const char *file_name,
         char **file_lines,
@@ -102,9 +111,11 @@ void sort_lines_plain_to_file(
     int *indices = malloc(sizeof(int) * cnt_lines);
     FILE *file;
 
+    /* init indices */
     for (i = 0; i < cnt_lines; i++)
         indices[i] = i;
    
+    /* using bubble sort */
     for (i = 0; i + 1 < cnt_lines; i++)
         for (j = 0; j + 1 < cnt_lines - i; j++)
             if (!reversed) {
@@ -120,7 +131,8 @@ void sort_lines_plain_to_file(
                     ))
                     swap_value(indices + j + 1, indices + j);
             }
-    
+   
+    /* write our data */
     file = fopen(file_name, "w");
     for (i = 0; i < cnt_lines; i++) {
         fputs(file_lines[indices[i]], file);
@@ -132,6 +144,7 @@ void sort_lines_plain_to_file(
 }
 
 
+/* do the same way like previous but sorting is lex */
 void sort_lines_lex_to_file(
         const char *file_name,
         char **file_lines,
@@ -192,6 +205,7 @@ int main(int argc, char **argv)
     file_lines = malloc(sizeof(char*) * cnt_lines);
     init_file_lines(in_file_name, file_lines, cnt_lines);
 
+    /* chose what sort we need */
     if (cmp_cstr(sorting_type, "plain"))
         sort_lines_plain_to_file(out_file_name, file_lines, cnt_lines, 0);
     else if (cmp_cstr(sorting_type, "lex"))

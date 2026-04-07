@@ -64,6 +64,7 @@ void *bubble_sort(void *args)
 }
 
 
+/* todo: make it in threads... */
 void merge(int *array, int left, int mid, int right)
 {
     int n = mid - left + 1, m =  right - mid, i, j, k;
@@ -96,25 +97,31 @@ void merge(int *array, int left, int mid, int right)
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2)
-        return 1;
-    
     int threads_amount = cstr_to_int(argv[1]);
     int part_size, i, left, mid, right, curr, tmp, size;
 
-    // init array
+    if (argc < 2)
+        return 1;
+    
+    /* init array */
     dynarr dyn;
     init_dynarr(&dyn);
     while (scanf("%d", &tmp) == 1)
         push_back_dynarr(&dyn, tmp);
-    //print_array(dyn.array, dyn.size);
     size = dyn.size;
 
-    // init threads
+    /* init threads */
     part_size = (size + threads_amount - 1) / threads_amount;
     pthread_t *threads = malloc(sizeof(pthread_t) * threads_amount);
     entry *entries = malloc(sizeof(entry) * threads_amount);
     for (i = 0; i < threads_amount; i++) {
+        /* spliting array on parts according to amount of threads */
+        /* extra threads will not be used */
+        /* for example: for array of 10 elements */
+        /* we can use no more than 5 threads because of */
+        /* 10 / 5 = 2 its smallest array that we can sort */
+        /* so we gonna split array on 5 parts, sort it in each thread */
+        /* and then merge it */
         left = i * part_size;
         right = (i + 1) * part_size - 1;
         if (right >= size)
@@ -125,13 +132,12 @@ int main(int argc, char *argv[])
         pthread_create(threads + i, NULL, bubble_sort, (void*)(entries + i));
     }
 
-    // wait for threads
+    /* wait for threads */
     for (i = 0; i < threads_amount; i++)
         if (i * part_size < size)
             pthread_join(threads[i], NULL);
-    //print_array(dyn.array, size);
    
-    // merge sorted parts
+    /* merge sorted parts */
     for (curr = part_size; curr < size; curr *= 2) {
         for (left = 0; left < size; left += 2*curr) {
             mid = left + curr - 1;

@@ -4,6 +4,11 @@
 #include <string.h>
 
 
+/* didnt find how to get a depricated sys_errlist[] and dont */
+/* have much time to static compile old versions of libc */
+/* so use only perror */
+
+
 const char *get_errname(int code)
 {
     switch (code) {
